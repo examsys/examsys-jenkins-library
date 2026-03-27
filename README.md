@@ -31,6 +31,96 @@ To use the development branch use:
 @Library('examsys-library@development')
 ```
 
+### Available functions
+
+#### examsysBuild
+
+Has several parameters, where they are optional a default is specified:
+
+* source: The details of the plugins repository, see [git()](https://www.jenkins.io/doc/pipeline/steps/git/)
+* production: Flags if the build should only contain production directories (default: true)
+* maintenance: Flag to include a `.htaccess-restricted` file that can be used to put ExamSys
+               into maintenance mode (default: false)
+* maintenanceIPs: A list of IP addresses (open per line) that should be included in the
+                  maintenance `.htaccess-restricted` file
+* clean: Flags if we should clean the contents of the directory before we start (default: false)
+
+```groovy
+examsysBuild([
+    source: [
+        url: 'git@github.org:examsys/examsys.git',
+        branch: '7.6.1',
+        credentialsId: 'ab97fb96-726d-4b05-a3a1-e60db0ff0ae2'
+    ],
+    production: false,
+    maintenance: true,
+    maintenanceIPs: '127.0.0.1',
+    clean: false,
+]) {
+    // Add additional build steps here.
+}
+```
+
+This step requires that the build node has the following installed:
+
+* grunt
+* npm
+
+#### examsysAddPlugin
+
+Has three parameters:
+
+* type: The type of ExamSys plugin
+* name: The name of the ExamSys plugin
+* source: The details of the plugins repository, see [git()](https://www.jenkins.io/doc/pipeline/steps/git/)
+
+```groovy
+examsysAddPlugin([
+    type: 'SMS',
+    name: 'plugin_cs_sms',
+    source: [
+        url: 'git@github.com:examsys/examsys-plugin_cs_sms.git',
+        branch: '1.4.0',
+        credentialsId: 'ab97fb96-726d-4b05-a3a1-e60db0ff0ae2'
+    ]
+])
+```
+
+#### examsysAddTinymcePlugin
+
+Has two parameters:
+
+* name: The name of the TinMCE plugin
+* source: The details of the plugins repository, see [git()](https://www.jenkins.io/doc/pipeline/steps/git/)
+
+```groovy
+examsysAddTinymcePlugin([
+    name: 'maths-equation-editor',
+    source: [
+        url: 'git@github.com:examsys/examsys-tinymce-plugin-maths-equation-editor.git',
+        branch: 'main',
+        credentialsId: 'ab97fb96-726d-4b05-a3a1-e60db0ff0ae2'
+    ]
+])
+```
+
+This step requires that the node running it has the following installed:
+
+* npm
+* yarn
+
+#### examsysInstallLanguagePacks
+
+Installs all the language packs.
+
+```groovy
+examsysAddTinymcePlugin([version: '7.6.0'])
+```
+
+## Required Jenkins plugins
+
+* [Git](https://plugins.jenkins.io/git/)
+
 ## Development of the library
 
 The library has three branches:
