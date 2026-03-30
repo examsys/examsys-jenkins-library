@@ -38,53 +38,14 @@ def call(Map pipelineParams = [:], Closure body) {
     if (maintenance) {
         sh '''cp .htaccess .htaccess-restricted'''
 
-        // Uncomment the rewrite rules.
-        sh '''sed -i "s/#Options -MultiViews +FollowSymLinks/Options -MultiViews +FollowSymLinks/" .htaccess-restricted'''
-        sh '''sed -i "s/#RewriteEngine On/RewriteEngine On/" .htaccess-restricted'''
-        sh '''sed -i "s/#RewriteRule \\!(maintenance/RewriteRule \\!(maintenance/"  .htaccess-restricted'''
-
         // Add in any IP addressed that have been listed.
-        if (!maintenanceIPs.equals('')) {
-            def String[] ipAddresses = maintenanceIPs.split('\n')
-            for(String address : ipAddresses) {
-                if (!address.equals('')) {
-                    sh """sed -i '/#RewriteCond \\%{REMOTE_ADDR} \\!<ip address> \\[NC\\]/a RewriteCond \\%{REMOTE_ADDR} \\!${address} \\[NC\\]'  .htaccess-restricted"""
-                }
-            }
-        }
+        buildMaintenanceHTAccess(maintenanceIPs, '.htaccess-restricted')
 
         include = include + ' .htaccess-restricted'
     }
 
     if (production) {
-        // Delete directories and files that we should not keep in production.
-        exclude = '--exclude-vcs ' +
-            '--exclude-vcs-ignores ' +
-            // CSS source directories.
-            '--exclude="css/source" ' +
-            "--exclude='component/**/css' " +
-            // Files used to create developer environments.
-            '--exclude="Vagrantfile" ' +
-            // Files used to get 3rd party libraries.
-            '--exclude="crowdin.yml.example" ' +
-            '--exclude="package-lock.json" '+
-            '--exclude="package.json" ' +
-            '--exclude="composer.*" ' +
-            // Files used to build ExamSys.
-            '--exclude="Gruntfile.js" ' +
-            // Automatic tests.
-            '--exclude="config/behat.example.xml" ' +
-            '--exclude="config/phpunit.example.xml" '+
-            '--exclude="testing/behat" ' +
-            '--exclude="testing/datagenerator" ' +
-            '--exclude="testing/eslint" ' +
-            '--exclude="testing/javascript" ' +
-            '--exclude="testing/unittest" ' +
-            '--exclude="rector.php" ' +
-            // Directories created by Jenkins when a repository is downloaded.
-            '--exclude="**/*@tmp" ' +
-            // Exclude any left over build files
-            '--exclude="*.tar.gz" '
+        exclude = getExcludedProductionFiles()
     }
 
     // Tar the files we want to copy over excluding the git files
@@ -97,4 +58,61 @@ def call(Map pipelineParams = [:], Closure body) {
     sh '''rm -f *.tar.gz'''
 
     return scmVars
+}
+
+/**
+ * Directories and files that we should not keep in production.
+ */
+private def getExcludedProductionFiles() {
+    def String exclude = '--exclude-vcs ' +
+        '--exclude-vcs-ignores ' +
+        // CSS source directories.
+        '--exclude="css/source" ' +
+        "--exclude='component/**/css' " +
+        // Files used to create developer environments.
+        '--exclude="Vagrantfile" ' +
+        // Files used to get 3rd party libraries.
+        '--exclude="crowdin.yml.example" ' +
+        '--exclude="package-lock.json" '+
+        '--exclude="package.json" ' +
+        '--exclude="composer.*" ' +
+        // Files used to build ExamSys.
+        '--exclude="Gruntfile.js" ' +
+        // Automatic tests.
+        '--exclude="config/behat.example.xml" ' +
+        '--exclude="config/phpunit.example.xml" '+
+        '--exclude="testing/behat" ' +
+        '--exclude="testing/datagenerator" ' +
+        '--exclude="testing/eslint" ' +
+        '--exclude="testing/javascript" ' +
+        '--exclude="testing/unittest" ' +
+        '--exclude="rector.php" ' +
+        // Directories created by Jenkins when a repository is downloaded.
+        '--exclude="**/*@tmp" ' +
+        // Exclude any left over build files
+        '--exclude="*.tar.gz" '
+
+    return exclude
+}
+
+/**
+ * Modifies an ExamSys .htaccess file so that it will turn on maintenance mode
+ */
+private def buildMaintenanceHTAccess(String maintenanceIPs, String filename) {
+    // Uncomment the rewrite rules.
+    sh """sed -i 's/#Options -MultiViews +FollowSymLinks/Options -MultiViews +FollowSymLinks/' ${filename}"""
+    sh """sed -i 's/#RewriteEngine On/RewriteEngine On/' ${filename}"""
+    sh """sed -i 's/#RewriteRule \\!(maintenance/RewriteRule \\!(maintenance/' ${filename}"""
+
+    if (maintenanceIPs.equals('')) {
+        // We will
+        return
+    }
+
+    def String[] ipAddresses = maintenanceIPs.split('\n')
+    for(String address : ipAddresses) {
+        if (!address.equals('')) {
+            sh """sed -i '/#RewriteCond \\%{REMOTE_ADDR} \\!<ip address> \\[NC\\]/a RewriteCond \\%{REMOTE_ADDR} \\!${address} \\[NC\\]' ${filename}"""
+        }
+    }
 }

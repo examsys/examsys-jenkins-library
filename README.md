@@ -107,6 +107,9 @@ examsysAddTinymcePlugin([
 This step requires that the node running it has the following installed:
 
 * npm
+* sed
+* tar
+* wget
 * yarn
 
 #### examsysInstallLanguagePacks
