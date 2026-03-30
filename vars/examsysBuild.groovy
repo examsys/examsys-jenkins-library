@@ -16,6 +16,7 @@ def call(Map pipelineParams = [:], Closure body) {
 
     def version = source.branch
     def String exclude = ''
+    def String include = '* .htaccess'
 
     // Remove any existing composer files.
     sh '''if [ -f composer.phar ]; then rm -f composer.phar; fi'''
@@ -32,6 +33,28 @@ def call(Map pipelineParams = [:], Closure body) {
     sh """sed -i "4i\\    <build>${scmVars.GIT_COMMIT}</build>" config/rogo.xml"""
 
     body()
+
+    sh '''if [ -f .htaccess-restricted ]; then rm -f .htaccess-restricted; fi'''
+    if (maintenance) {
+        sh '''cp .htaccess .htaccess-restricted'''
+
+        // Uncomment the rewrite rules.
+        sh '''sed -i "s/#Options -MultiViews +FollowSymLinks/Options -MultiViews +FollowSymLinks/" .htaccess-restricted'''
+        sh '''sed -i "s/#RewriteEngine On/RewriteEngine On/" .htaccess-restricted'''
+        sh '''sed -i "s/#RewriteRule \\!(maintenance/RewriteRule \\!(maintenance/"  .htaccess-restricted'''
+
+        // Add in any IP addressed that have been listed.
+        if (!maintenanceIPs.equals('')) {
+            def String[] ipAddresses = maintenanceIPs.split('\n')
+            for(String address : ipAddresses) {
+                if (!address.equals('')) {
+                    sh """sed -i '/#RewriteCond \\%{REMOTE_ADDR} \\!<ip address> \\[NC\\]/a RewriteCond \\%{REMOTE_ADDR} \\!${address} \\[NC\\]'  .htaccess-restricted"""
+                }
+            }
+        }
+
+        include = include + ' .htaccess-restricted'
+    }
 
     if (production) {
         // Delete directories and files that we should not keep in production.
@@ -65,7 +88,7 @@ def call(Map pipelineParams = [:], Closure body) {
     }
 
     // Tar the files we want to copy over excluding the git files
-    sh """tar -czf ${version}.tar.gz ${exclude} * .htaccess"""
+    sh """tar -czf ${version}.tar.gz ${exclude} ${include}"""
 
     // Save artifact
     archiveArtifacts artifacts: '*.gz'
