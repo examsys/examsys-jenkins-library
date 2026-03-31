@@ -60,7 +60,7 @@ def call(Map pipelineParams = [:], Closure body) {
     // Clean up any artifact files.
     sh '''rm -f *.tar.gz'''
 
-    return scmVars
+    return scmVars.GIT_COMMIT
 }
 
 /**

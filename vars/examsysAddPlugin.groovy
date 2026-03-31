@@ -13,5 +13,5 @@ def call(Map pipelineParams = [:]) {
         }
     }
 
-    return scmVars
+    return scmVars.GIT_COMMIT
 }
