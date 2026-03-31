@@ -17,6 +17,7 @@ def call(Map pipelineParams = [:], Closure body) {
     def version = source.branch
     def String exclude = ''
     def String include = '* .htaccess'
+    def String buildFile = "ExamSys-${scmVars.GIT_COMMIT}.tar.gz"
 
     // Remove any existing composer files.
     sh '''if [ -f composer.phar ]; then rm -f composer.phar; fi'''
@@ -34,8 +35,10 @@ def call(Map pipelineParams = [:], Closure body) {
 
     body()
 
+    sh '''if [ -f .htaccess-online ]; then rm -f .htaccess-online; fi'''
     sh '''if [ -f .htaccess-restricted ]; then rm -f .htaccess-restricted; fi'''
     if (maintenance) {
+        sh '''cp .htaccess .htaccess-online'''
         sh '''cp .htaccess .htaccess-restricted'''
 
         // Add in any IP addressed that have been listed.
@@ -49,10 +52,10 @@ def call(Map pipelineParams = [:], Closure body) {
     }
 
     // Tar the files we want to copy over excluding the git files
-    sh """tar -czf ${version}.tar.gz ${exclude} ${include}"""
+    sh """tar -czf ${buildFile} ${exclude} ${include}"""
 
     // Save artifact
-    archiveArtifacts artifacts: '*.gz'
+    archiveArtifacts artifacts: buildFile
 
     // Clean up any artifact files.
     sh '''rm -f *.tar.gz'''

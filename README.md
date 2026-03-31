@@ -39,8 +39,8 @@ Has several parameters, where they are optional a default is specified:
 
 * source: The details of the plugins repository, see [git()](https://www.jenkins.io/doc/pipeline/steps/git/)
 * production: Flags if the build should only contain production directories (default: true)
-* maintenance: Flag to include a `.htaccess-restricted` file that can be used to put ExamSys
-               into maintenance mode (default: false)
+* maintenance: Flag to include a `.htaccess-restricted` and `.htaccess-online` file which can be
+               used to put ExamSys into and out of maintenance mode (default: false)
 * maintenanceIPs: A list of IP addresses (open per line) that should be included in the
                   maintenance `.htaccess-restricted` file
 * clean: Flags if we should clean the contents of the directory before we start (default: false)
@@ -60,6 +60,10 @@ examsysBuild([
     // Add additional build steps here.
 }
 ```
+
+It will create an artefact named: `ExamSys-<commit number>.tar.gz`, this will allow us to
+easily associate a build file with a specific commit in the repository if we need to verify
+what code it contains.
 
 This step requires that the build node has the following installed:
 
