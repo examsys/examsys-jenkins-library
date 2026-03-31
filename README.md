@@ -69,6 +69,9 @@ This step requires that the build node has the following installed:
 
 * grunt
 * npm
+* sed
+* tar
+* wget
 
 #### examsysAddPlugin
 
@@ -111,9 +114,6 @@ examsysAddTinymcePlugin([
 This step requires that the node running it has the following installed:
 
 * npm
-* sed
-* tar
-* wget
 * yarn
 
 #### examsysInstallLanguagePacks
