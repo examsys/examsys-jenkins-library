@@ -51,14 +51,14 @@ def call(Map pipelineParams = [:], Closure body) {
         exclude = getExcludedProductionFiles()
     }
 
+    // Clean up any artifact files.
+    sh '''rm -f *.tar.gz'''
+
     // Tar the files we want to copy over excluding the git files
     sh """tar -czf ${buildFile} ${exclude} ${include}"""
 
     // Save artifact
     archiveArtifacts artifacts: buildFile
-
-    // Clean up any artifact files.
-    sh '''rm -f *.tar.gz'''
 
     return scmVars.GIT_COMMIT
 }
