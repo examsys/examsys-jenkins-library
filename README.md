@@ -124,9 +124,30 @@ Installs all the language packs.
 examsysAddTinymcePlugin([version: '7.6.0'])
 ```
 
+#### examsysMaintenanceMode
+
+Has five parameters:
+
+* credentialsId: The id of stored credentials in Jenkins that are used to access the servers
+* enable: If maintenance mode is turned on or off (default: true)
+* username: The user that will be used to turn maintenance mode on or off
+* path: The base path that ExamSys is installed in on the servers
+* servers: List of servers that should have maintenance mode changed on them. One server per line.
+
+```groovy
+examsysMaintenanceMode([
+    enable: true,
+    username: 'jenkins',
+    credentialsId: 'ab97fb96-726d-4b05-a3a1-e60db0ff0ae2',
+    path: '/var/www/html',
+    servers: 'examsys'
+])
+```
+
 ## Required Jenkins plugins
 
 * [Git](https://plugins.jenkins.io/git/)
+* [SSH Agent](https://plugins.jenkins.io/ssh-agent/)
 
 ## Development of the library
 
