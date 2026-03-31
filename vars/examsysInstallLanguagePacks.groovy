@@ -1,4 +1,5 @@
 def call(Map pipelineParams = [:]) {
+    // The version branch of ExamSys we are building.
     def String version = pipelineParams.version ?: 'develop'
 
     def String langPacksURL = 'http://examsys-oss.nottingham.ac.uk/langpacks/' + version + '/'

@@ -1,5 +1,7 @@
 def call(Map pipelineParams = [:]) {
+    // The name of the plugin (it will also be the name of the directory the plugin is installed into)
     def String name = pipelineParams.name
+    // The details of the repository for the plugin.
     def Map source = pipelineParams.source
 
     def String buildDir = name + 'Build'

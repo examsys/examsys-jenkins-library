@@ -1,9 +1,13 @@
 def call(Map pipelineParams = [:], Closure body) {
-    // Parse the parameters for the call.
+    // The details of the ExamSys repository.
     def Map source = pipelineParams.source
+    // Flag if this is a build for a production like server.
     def Boolean production = pipelineParams.production ?: true
+    // Flag if we want to add the .htaccess files that can be used to turn on maintenance mode easily.
     def Boolean maintenance = pipelineParams.maintenance ?: false
+    // List of IP addresses that should be allowed to access ExamSys.
     def String maintenanceIPs = pipelineParams.maintenanceIPs ?: ''
+    // Flags if we should delete the contents of the directory this call was made from.
     def Boolean clean = pipelineParams.clean ?: false
 
     if (clean) {
