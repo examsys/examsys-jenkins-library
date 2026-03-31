@@ -45,6 +45,8 @@ Has several parameters, where they are optional a default is specified:
                   maintenance `.htaccess-restricted` file
 * clean: Flags if we should clean the contents of the directory before we start (default: false)
 
+Returns: The commit number of ExamSys that was checked out
+
 ```groovy
 examsysBuild([
     source: [
@@ -81,6 +83,8 @@ Has three parameters:
 * name: The name of the ExamSys plugin
 * source: The details of the plugins repository, see [git()](https://www.jenkins.io/doc/pipeline/steps/git/)
 
+Returns: The commit number of plugin that was checked out
+
 ```groovy
 examsysAddPlugin([
     type: 'SMS',
@@ -99,6 +103,8 @@ Has two parameters:
 
 * name: The name of the TinMCE plugin
 * source: The details of the plugins repository, see [git()](https://www.jenkins.io/doc/pipeline/steps/git/)
+
+Returns: The commit number of TinyMCE plugin that was checked out
 
 ```groovy
 examsysAddTinymcePlugin([
