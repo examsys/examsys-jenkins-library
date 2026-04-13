@@ -12,7 +12,7 @@ def call(Map pipelineParams = [:]) {
     // An array of server names.
     def String[] servers = serversString.split('\n')
 
-    def String sourceFile = enable ? '.htaccess-restricted' : '.htaccess-online'
+    def String sourceFile = enable ? '.htaccess-restricted' : '.htaccess-open'
 
     for(String server : servers) {
         sshagent([credentials]) {

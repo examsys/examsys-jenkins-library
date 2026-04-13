@@ -39,10 +39,10 @@ def call(Map pipelineParams = [:], Closure body) {
 
     body()
 
-    sh '''if [ -f .htaccess-online ]; then rm -f .htaccess-online; fi'''
+    sh '''if [ -f .htaccess-open ]; then rm -f .htaccess-open; fi'''
     sh '''if [ -f .htaccess-restricted ]; then rm -f .htaccess-restricted; fi'''
     if (maintenance) {
-        sh '''cp .htaccess .htaccess-online'''
+        sh '''cp .htaccess .htaccess-open'''
         sh '''cp .htaccess .htaccess-restricted'''
 
         // Add in any IP addressed that have been listed.
