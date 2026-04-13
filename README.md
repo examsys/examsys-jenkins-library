@@ -132,9 +132,8 @@ examsysAddTinymcePlugin([version: '7.6.0'])
 
 #### examsysMaintenanceMode
 
-Has five parameters:
+Has four parameters:
 
-* credentialsId: The id of stored credentials in Jenkins that are used to access the servers
 * enable: If maintenance mode is turned on or off (default: true)
 * username: The user that will be used to turn maintenance mode on or off
 * path: The base path that ExamSys is installed in on the servers
@@ -144,11 +143,52 @@ Has five parameters:
 examsysMaintenanceMode([
     enable: true,
     username: 'jenkins',
-    credentialsId: 'ab97fb96-726d-4b05-a3a1-e60db0ff0ae2',
     path: '/var/www/html',
     servers: 'examsys'
 ])
 ```
+
+#### examsysDeploy
+
+Has five required parameters:
+
+* deployFile: The name of a tar.gz file that contains the ExamSys code to be deployed
+* servers: List of servers that should have code deployed on them. One server per line.
+* upgradeServer: The name of the server that the database upgrade will be performed on
+* sshUser: The username that will be used to connect to the servers, we assume
+           that we have automatic ssh login for them.
+* credentialsId: The id of the the credentials provider that provides
+                 the username and password that will be passed to the upgrade script
+
+Has seven optional parameters:
+
+* runUpgradeScript: Flag if a database upgrade should be performed (default: true)
+* deployLocation: The location that the code should be deployed to (default: /var/www/html)
+* configPermissions: The permissions that the config files should have (default: 444)
+* serverUser: The user that the ExamSys code should be owned by (default: www-data)
+* serverGroup: The group that the ExamSys code should be owned by (default: www-data)
+* upgradeStaffHelp: Flags if staff help should be updated (default: true)
+* upgradeStudentHelp: Flags if the student help should be updated (default: true)
+
+```groovy
+examsysDeploy([
+    deployFile: '/path/to/file.tar.gz',
+    servers: 'examsys',
+    upgradeServer: 'examsys',
+    sshUser: 'jenkins',
+    credentialsId: 'ab97fb96-726d-4b05-a3a1-e60db0ff0ae2',
+    runUpgradeScript: true,
+    deployLocation: '/var/www/html',
+    configPermissions: '444',
+    serverUser: 'www-data',
+    serverGroup: 'www-data',
+    upgradeStaffHelp: true,
+    upgradeStudentHelp: true
+])
+```
+
+This step requires that the user logging into the servers can `sudo` without further
+authentication
 
 ## Required Jenkins plugins
 
