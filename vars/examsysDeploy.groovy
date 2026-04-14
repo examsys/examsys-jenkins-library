@@ -21,7 +21,7 @@ def call(Map pipelineParams = [:]) {
     String configPermissions = pipelineParams.configPermissions ?: '444'
     // The user and group that the deployed files will be given.
     String serverUser =  pipelineParams.serverUser ?: 'www-data'
-    String serverGroup =  pipelineParams.serverGroup ?: 'www-data'
+    String serverGroup =  pipelineParams.serverGroup ?: 'www-data' // groovylint-disable-line DuplicateStringLiteral
 
     // Flags for upgrading help.
     Boolean upgradeStaffHelp = pipelineParams.upgradeStaffHelp ?: true
@@ -40,11 +40,11 @@ def call(Map pipelineParams = [:]) {
     // First check that we can deploy to all the servers.
     for (String server : servers) {
         // Fail if the ExamSys live directory does not exist.
-        sh """ssh ${sshUser}@${server} -t '[[ ! -d ${deployLocation}]] && exit 1'"""
+        sh """ssh ${sshUser}@${server} -t '[[ ! -d ${deployLocation} ]] && exit 1'"""
         // Fail is there is a partial deployment present.
-        sh """ssh ${sshUser}@${server} -t '[[ -d ${newCode}]] && exit 1'"""
+        sh """ssh ${sshUser}@${server} -t '[[ -d ${newCode} ]] && exit 1'"""
         // Fail if there is an old deployment file there.
-        sh """ssh ${sshUser}@${server} -t '[[ -f ~/${packageFilename}]] && exit 1'"""
+        sh """ssh ${sshUser}@${server} -t '[[ -f ~/${packageFilename} ]] && exit 1'"""
     }
 
     // Put the code on each of the servers.
@@ -52,7 +52,7 @@ def call(Map pipelineParams = [:]) {
     for (String server : servers) {
         // First delete any old code directory on the server, we are going to make it impossible
         // to roll back to a state previous to the upgrade we are about to do.
-        sh """ssh ${sshUser}@${server} -t '[[ -d ${oldCode}]] && rm -rf ${oldCode}'"""
+        sh """ssh ${sshUser}@${server} -t '[[ -d ${oldCode} ]] && rm -rf ${oldCode}'"""
 
         // Upload the new code onto the servers.
         sh """ssh ${sshUser}@${server} -t 'mkdir ${newCode}'"""
