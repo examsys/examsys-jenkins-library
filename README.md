@@ -126,6 +126,11 @@ This step requires that the node running it has the following installed:
 
 Installs all the language packs.
 
+Has 2 parameters:
+
+* version: The version of ExamSys the strings are for
+* location: The base URL of the language packs (default: https://examsys-oss.nottingham.ac.uk/langpacks/)
+
 ```groovy
 examsysAddTinymcePlugin([version: '7.6.0'])
 ```

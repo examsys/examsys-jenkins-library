@@ -1,10 +1,10 @@
 def call(Map pipelineParams = [:]) {
-    // The version branch of ExamSys we are building.
+    // The version of language files we are building for..
     String version = pipelineParams.version ?: 'develop'
-    String langServer = pipelineParams.langServer ?: 'https://examsys-oss.nottingham.ac.uk'
-    String langBasePath = pipelineParams.langBasePath ?: 'langpacks/'
+    // The name of the server we get the language files for, we will allow it to be overridden from the normal place.
+    String location = pipelineParams.location ?: 'https://examsys-oss.nottingham.ac.uk/langpacks/'
 
-    String langPacksURL = langServer + '/' + langBasePath + version + '/'
+    String langPacksURL = location + version
 
     // Download and install all language packs for ExamSys.
     sh '''if [ -f rogo.zip ]; then rm rogo.zip; fi'''
