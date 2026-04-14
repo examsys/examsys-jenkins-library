@@ -52,24 +52,24 @@ def call(Map pipelineParams = [:]) {
     for (String server : servers) {
         // First delete any old code directory on the server, we are going to make it impossible
         // to roll back to a state previous to the upgrade we are about to do.
-        sh """ssh ${sshUser}@${server} -t 'if [ -d ${oldCode} ]; then rm -rf ${oldCode}; fi'"""
+        sh """ssh ${sshUser}@${server} -t 'if [ -d ${oldCode} ]; then sudo rm -rf ${oldCode}; fi'"""
 
         // Upload the new code onto the servers.
-        sh """ssh ${sshUser}@${server} -t 'mkdir ${newCode}'"""
+        sh """ssh ${sshUser}@${server} -t 'sudo mkdir ${newCode}'"""
         sh """scp ${deployFile} ${sshUser}@${upgradeServer}:~/${packageFilename}"""
-        sh """ssh ${sshUser}@${server} -t 'cd ${newCode}; tar xzf ~/${packageFilename}'"""
+        sh """ssh ${sshUser}@${server} -t 'cd ${newCode}; sudo tar xzf ~/${packageFilename}'"""
 
         // Copy the existing config file into the new codebase.
-        sh """ssh ${sshUser}@${server} -t 'cp ${deployLocation}${configFile} ${newCode}${configFile}'"""
+        sh """ssh ${sshUser}@${server} -t 'sudo cp ${deployLocation}${configFile} ${newCode}${configFile}'"""
 
         // Protect the config files.
-        sh """ssh ${sshUser}@${server} -t 'chmod ${configPermissions} ${newCode}${configDir}/*'"""
+        sh """ssh ${sshUser}@${server} -t 'sudo chmod ${configPermissions} ${newCode}${configDir}/*'"""
 
         // Set the file ownership correctly.
-        sh """ssh ${sshUser}@${server} -t 'chmod -R ${serverUser}:${serverGroup} ${newCode}'"""
+        sh """ssh ${sshUser}@${server} -t 'sudo chmod -R ${serverUser}:${serverGroup} ${newCode}'"""
 
         // Clean up the server after ourselves.
-        sh """ssh ${sshUser}@${server} -t 'rm ~/${packageFilename}'"""
+        sh """ssh ${sshUser}@${server} -t 'sudo rm ~/${packageFilename}'"""
     }
 
     // Move the code to it's live location, we wait until now to minimise the amount of time
@@ -77,9 +77,9 @@ def call(Map pipelineParams = [:]) {
     for (String server : servers) {
         // First store the old code in the old directory, so that if a rollback is needed it can be done manually by
         // a SysAdmin.
-        sh """ssh ${sshUser}@${server} -t 'mv ${deployLocation} ${oldCode}'"""
+        sh """ssh ${sshUser}@${server} -t 'sudo mv ${deployLocation} ${oldCode}'"""
         // Move the new code into it's place.
-        sh """ssh ${sshUser}@${server} -t 'mv ${newCode} ${deployLocation}'"""
+        sh """ssh ${sshUser}@${server} -t 'sudo mv ${newCode} ${deployLocation}'"""
     }
 
     if (runUpgradeScript) {
@@ -93,14 +93,14 @@ def call(Map pipelineParams = [:]) {
             sh """scp ${sshUser}@${upgradeServer}:${deployLocation}${configFile} '$WORKSPACE/config-old.php'"""
 
             // Allow the config file to be modified during an upgrade.
-            sh """ssh ${sshUser}@${server} -t 'chmod 774 ${newCode}${configFile}'"""
+            sh """ssh ${sshUser}@${server} -t 'sudo chmod 774 ${newCode}${configFile}'"""
 
             // Do the upgrade.
             String parameters = """-u${DBUPGRADEUSER} -p${DBUPGRADEPASS} ${staffHelp} ${studentHelp}"""
             sh """ssh ${sshUser}@${upgradeServer} -t 'sudo ${deployLocation}/cli/upd.php ${parameters}'"""
 
             // Make sure that the config file and any backups are readonly.
-            sh """ssh ${sshUser}@${server} -t 'chmod ${configPermissions} ${newCode}${configDir}/*'"""
+            sh """ssh ${sshUser}@${server} -t 'sudo chmod ${configPermissions} ${newCode}${configDir}/*'"""
 
             // Get the new config file from the upgrade server.
             sh """scp ${sshUser}@${upgradeServer}:${deployLocation}${configFile} '$WORKSPACE/config-new.php'"""
