@@ -65,22 +65,27 @@ def call(Map pipelineParams = [:]) {
 }
 
 private packageFilename() {
+    // The name we will use within this code for the deployment file.
     return 'examsysCode.tar.gz'
 }
 
 private configDir() {
+    // The ExamSys configuration directory, must start with a slash and re relative to the root of ExamSys.
     return '/config'
 }
 
 private configFile() {
+    // The name of the ExamSys configuration file.
     return configDir() + '/config.php'
 }
 
 private newCodeLocation(String deployLocation) {
+    // The name of the directory that we will temporarily store the new code.
     return deployLocation + '_new'
 }
 
 private oldCodeLocation(String deployLocation) {
+    // The name of the directory we will store the old code.
     return deployLocation + '_old'
 }
 
