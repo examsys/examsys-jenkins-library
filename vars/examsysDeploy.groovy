@@ -39,12 +39,10 @@ def call(Map pipelineParams = [:]) {
             sshUser,
             server,
             deployFile,
-            configPermissions,
             serverUser,
+            configPermissions,
             serverGroup,
-            deployLocation,
-            upgradeStaffHelp,
-            upgradeStudentHelp
+            deployLocation
         )
     }
 
