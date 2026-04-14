@@ -1,14 +1,14 @@
 def call(Map pipelineParams = [:], Closure body) {
     // The details of the ExamSys repository.
-    def Map source = pipelineParams.source
+    Map source = pipelineParams.source
     // Flag if this is a build for a production like server.
-    def Boolean production = pipelineParams.production ?: true
+    Boolean production = pipelineParams.production ?: true
     // Flag if we want to add the .htaccess files that can be used to turn on maintenance mode easily.
-    def Boolean maintenance = pipelineParams.maintenance ?: false
+    Boolean maintenance = pipelineParams.maintenance ?: false
     // List of IP addresses that should be allowed to access ExamSys.
-    def String maintenanceIPs = pipelineParams.maintenanceIPs ?: ''
+    String maintenanceIPs = pipelineParams.maintenanceIPs ?: ''
     // Flags if we should delete the contents of the directory this call was made from.
-    def Boolean clean = pipelineParams.clean ?: false
+    Boolean clean = pipelineParams.clean ?: false
 
     if (clean) {
         // Remove all files in the directory before ww start.
@@ -18,10 +18,9 @@ def call(Map pipelineParams = [:], Closure body) {
     // Download the ExamSys repository.
     def scmVars = git(source)
 
-    def version = source.branch
-    def String exclude = ''
-    def String include = '* .htaccess'
-    def String buildFile = "ExamSys-${scmVars.GIT_COMMIT}.tar.gz"
+    String exclude = ''
+    String include = '* .htaccess'
+    String buildFile = "ExamSys-${scmVars.GIT_COMMIT}.tar.gz"
 
     // Remove any existing composer files.
     sh '''if [ -f composer.phar ]; then rm -f composer.phar; fi'''
@@ -70,8 +69,8 @@ def call(Map pipelineParams = [:], Closure body) {
 /**
  * Directories and files that we should not keep in production.
  */
-private def getExcludedProductionFiles() {
-    def String exclude = '--exclude-vcs ' +
+private getExcludedProductionFiles() {
+    String exclude = '--exclude-vcs ' +
         '--exclude-vcs-ignores ' +
         // CSS source directories.
         '--exclude="css/source" ' +
@@ -80,14 +79,14 @@ private def getExcludedProductionFiles() {
         '--exclude="Vagrantfile" ' +
         // Files used to get 3rd party libraries.
         '--exclude="crowdin.yml.example" ' +
-        '--exclude="package-lock.json" '+
+        '--exclude="package-lock.json" ' +
         '--exclude="package.json" ' +
         '--exclude="composer.*" ' +
         // Files used to build ExamSys.
         '--exclude="Gruntfile.js" ' +
         // Automatic tests.
         '--exclude="config/behat.example.xml" ' +
-        '--exclude="config/phpunit.example.xml" '+
+        '--exclude="config/phpunit.example.xml" ' +
         '--exclude="testing/behat" ' +
         '--exclude="testing/datagenerator" ' +
         '--exclude="testing/eslint" ' +
@@ -105,7 +104,7 @@ private def getExcludedProductionFiles() {
 /**
  * Modifies an ExamSys .htaccess file so that it will turn on maintenance mode
  */
-private def buildMaintenanceHTAccess(String maintenanceIPs, String filename) {
+private buildMaintenanceHTAccess(String maintenanceIPs, String filename) {
     // Uncomment the rewrite rules.
     sh """sed -i 's/#Options -MultiViews +FollowSymLinks/Options -MultiViews +FollowSymLinks/' ${filename}"""
     sh """sed -i 's/#RewriteEngine On/RewriteEngine On/' ${filename}"""
@@ -116,8 +115,8 @@ private def buildMaintenanceHTAccess(String maintenanceIPs, String filename) {
         return
     }
 
-    def String[] ipAddresses = maintenanceIPs.split('\n')
-    for(String address : ipAddresses) {
+    String[] ipAddresses = maintenanceIPs.split('\n')
+    for (String address : ipAddresses) {
         if (!address.equals('')) {
             sh """sed -i '/#RewriteCond \\%{REMOTE_ADDR} \\!<ip address> \\[NC\\]/a RewriteCond \\%{REMOTE_ADDR} \\!${address} \\[NC\\]' ${filename}"""
         }

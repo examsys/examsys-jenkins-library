@@ -1,8 +1,8 @@
 def call(Map pipelineParams = [:]) {
     // The version branch of ExamSys we are building.
-    def String version = pipelineParams.version ?: 'develop'
+    String version = pipelineParams.version ?: 'develop'
 
-    def String langPacksURL = 'http://examsys-oss.nottingham.ac.uk/langpacks/' + version + '/'
+    String langPacksURL = 'http://examsys-oss.nottingham.ac.uk/langpacks/' + version + '/'
 
     // Download and install all language packs for ExamSys.
     sh '''if [ -f rogo.zip ]; then rm rogo.zip; fi'''

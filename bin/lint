@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+docker run --rm -u "$(id -u):$(id -g)" -w=/tmp -v "$PWD":/tmp nvuillam/npm-groovy-lint -c recommended-jenkinsfile

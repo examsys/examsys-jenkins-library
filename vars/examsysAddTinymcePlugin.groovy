@@ -1,11 +1,11 @@
 def call(Map pipelineParams = [:]) {
     // The name of the plugin (it will also be the name of the directory the plugin is installed into)
-    def String name = pipelineParams.name
+    String name = pipelineParams.name
     // The details of the repository for the plugin.
-    def Map source = pipelineParams.source
+    Map source = pipelineParams.source
 
-    def String buildDir = name + 'Build'
-    def Map scmVars
+    String buildDir = name + 'Build'
+    Map scmVars
 
     dir('texteditor') {
         dir('plugin_tinymce_texteditor') {
