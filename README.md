@@ -202,3 +202,9 @@ The library has three branches:
 * **production** - This branch should be stable and tested, it will be used for jobs that are used in production.
 * **testing** - This branch should be used during testing to ensure that future releases of the code work.
 * **development** - New changes should go into this branch
+
+The project can be linted on Linux using:
+
+```bash
+bin/lint
+```
