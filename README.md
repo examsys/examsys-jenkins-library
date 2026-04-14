@@ -165,7 +165,7 @@ Has seven optional parameters:
 * runUpgradeScript: Flag if a database upgrade should be performed (default: true)
 * deployLocation: The location that the code should be deployed to (default: /var/www/html)
 * configPermissions: The permissions that the config files should have (default: 444)
-* serverUser: The user that the ExamSys code should be owned by (default: www-data)
+* serverUser: The user that the ExamSys code should be owned by (default: the sshUser)
 * serverGroup: The group that the ExamSys code should be owned by (default: www-data)
 * upgradeStaffHelp: Flags if staff help should be updated (default: true)
 * upgradeStudentHelp: Flags if the student help should be updated (default: true)
@@ -180,7 +180,7 @@ examsysDeploy([
     runUpgradeScript: true,
     deployLocation: '/var/www/html',
     configPermissions: '444',
-    serverUser: 'www-data',
+    serverUser: 'jenkins',
     serverGroup: 'www-data',
     upgradeStaffHelp: true,
     upgradeStudentHelp: true

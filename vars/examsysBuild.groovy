@@ -118,6 +118,7 @@ private buildMaintenanceHTAccess(String maintenanceIPs, String filename) {
     String[] ipAddresses = maintenanceIPs.split('\n')
     for (String address : ipAddresses) {
         if (!address.equals('')) {
+            // groovylint-disable-next-line LineLength
             sh """sed -i '/#RewriteCond \\%{REMOTE_ADDR} \\!<ip address> \\[NC\\]/a RewriteCond \\%{REMOTE_ADDR} \\!${address} \\[NC\\]' ${filename}"""
         }
     }
