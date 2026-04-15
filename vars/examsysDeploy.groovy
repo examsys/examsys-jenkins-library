@@ -54,7 +54,14 @@ def call(Map pipelineParams = [:]) {
 
     if (runUpgradeScript) {
         // Run the upgrade and get back a list of any changes to the config file.
-        configDiff = doUpgrade(credentialsId, sshUser, upgradeServer, deployLocation)
+        configDiff = doUpgrade(
+            credentialsId,
+            sshUser,
+            upgradeServer,
+            deployLocation,
+            upgradeStaffHelp,
+            upgradeStudentHelp
+        )
     }
 
     // Return the diff of configuration changes, so we can let the admin know,
