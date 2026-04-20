@@ -203,8 +203,14 @@ private doUpgrade(
         sh """ssh ${sshUser}@${upgradeServer} -t 'chmod 774 ${deployLocation}${configFile}'"""
 
         // Do the upgrade.
-        String parameters = """-u${DBUPGRADEUSER} -p${DBUPGRADEPASS} ${staffHelp} ${studentHelp}"""
-        sh """ssh ${sshUser}@${upgradeServer} -t '${deployLocation}/cli/upd.php ${parameters}'"""
+        withEnv([
+            "DBUPGRADEUSER=${DBUPGRADEUSER}",
+            "DBUPGRADEPASS=${DBUPGRADEPASS}"
+        ]) {
+            String localCommand = """ssh ${sshUser}@${upgradeServer} -t"""
+            String parameters = '-u${DBUPGRADEUSER} -p${DBUPGRADEPASS}'
+            sh """${localCommand} '${deployLocation}/cli/upd.php ${parameters} ${staffHelp} ${studentHelp}'"""
+        }
 
         // Make sure that the config file and any backups are readonly.
         sh """ssh ${sshUser}@${upgradeServer} -t 'chmod ${configPermissions} ${deployLocation}${configDir}/*'"""
