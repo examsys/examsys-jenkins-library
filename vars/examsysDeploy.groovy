@@ -202,8 +202,15 @@ private doUpgrade(
         usernameVariable: 'DBUPGRADEUSER',
         passwordVariable: 'DBUPGRADEPASS'
     )]) {
+        String oldFile = "$WORKSPACE/config-old.php"
+        String newFile = "$WORKSPACE/config-new.php"
+
+        // Clean up config files, if they have been left there by a failed deployment.
+        sh """if [ -f ${oldFile} ]; then rm -f ${oldFile}; fi;"""
+        sh """if [ -f ${newFile} ]; then rm -f ${newFile}; fi;"""
+
         // Get the existing config file from the upgrade server.
-        sh """scp ${sshUser}@${upgradeServer}:${deployLocation}${configFile} '$WORKSPACE/config-old.php'"""
+        sh """scp ${sshUser}@${upgradeServer}:${deployLocation}${configFile} '${oldFile}'"""
 
         // Allow the config file to be modified during an upgrade.
         sh """ssh ${sshUser}@${upgradeServer} -t 'chmod 774 ${deployLocation}${configFile}'"""
@@ -222,17 +229,17 @@ private doUpgrade(
         sh """ssh ${sshUser}@${upgradeServer} -t 'chmod ${configPermissions} ${deployLocation}${configDir}/*'"""
 
         // Get the new config file from the upgrade server.
-        sh """scp ${sshUser}@${upgradeServer}:${deployLocation}${configFile} '$WORKSPACE/config-new.php'"""
+        sh """scp ${sshUser}@${upgradeServer}:${deployLocation}${configFile} '${newFile}'"""
 
         // Store if there have been any configuration changes.
         configDiff = sh(
-            script: """diff $WORKSPACE/config-old.php $WORKSPACE/config-new.php""",
+            script: """diff ${oldFile} ${newFile}""",
             returnStdout: true
         ).trim()
 
         // Clean up after ourselves.
-        sh """rm '$WORKSPACE/config-old.php'"""
-        sh """rm '$WORKSPACE/config-new.php'"""
+        sh """rm ${oldFile}"""
+        sh """rm ${newFile}"""
     }
 
     return configDiff
