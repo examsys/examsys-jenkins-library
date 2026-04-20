@@ -142,7 +142,7 @@ private addCode(
     sh """ssh ${sshUser}@${server} -t 'chmod ${configPermissions} ${newCode}${configDir}/*'"""
 
     // Set the file ownership correctly.
-    sh """ssh ${sshUser}@${server} -t 'chmod -R ${serverUser}:${serverGroup} ${newCode}'"""
+    sh """ssh ${sshUser}@${server} -t 'chown -R ${serverUser}:${serverGroup} ${newCode}'"""
 
     // Clean up the server after ourselves.
     sh """ssh ${sshUser}@${server} -t 'rm ~/${packageFilename}'"""
