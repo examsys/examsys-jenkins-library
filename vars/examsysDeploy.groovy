@@ -45,6 +45,8 @@ def call(Map pipelineParams = [:]) {
             deployFile,
             serverUser,
             configPermissions,
+            filePermissions,
+            cliPermissions,
             serverGroup,
             deployLocation
         )
@@ -64,7 +66,8 @@ def call(Map pipelineParams = [:]) {
             upgradeServer,
             deployLocation,
             upgradeStaffHelp,
-            upgradeStudentHelp
+            upgradeStudentHelp,
+            configPermissions
         )
     }
 
@@ -121,6 +124,8 @@ private addCode(
     String deployFile,
     String serverUser,
     String configPermissions,
+    String filePermissions,
+    String cliPermissions,
     String serverGroup,
     String deployLocation
 ) {
@@ -180,7 +185,8 @@ private doUpgrade(
     String upgradeServer,
     String deployLocation,
     Boolean upgradeStaffHelp,
-    Boolean upgradeStudentHelp
+    Boolean upgradeStudentHelp,
+    String configPermissions
 ) {
     String configDiff = ''
     String configDir = configDir()
