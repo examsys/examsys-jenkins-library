@@ -106,8 +106,8 @@ private testServer(
     sh """ssh ${sshUser}@${server} -t 'if [ ! -d ${deployLocation} ]; then exit 1; fi'"""
     // Fail is there is a partial deployment present.
     sh """ssh ${sshUser}@${server} -t 'if [ -d ${newCode} ]; then exit 1; fi'"""
-    // Fail if there is an old deployment file there.
-    sh """ssh ${sshUser}@${server} -t 'if [ -f ~/${packageFilename} ]; then exit 1; fi'"""
+    // Delete the tar.gz file if it is present.
+    sh """ssh ${sshUser}@${server} -t 'if [ -f ~/${packageFilename} ]; then rm -f ~/${packageFilename}; fi'"""
 }
 
 // groovylint-disable-next-line ParameterCount
