@@ -222,7 +222,7 @@ private doUpgrade(
         ]) {
             String localCommand = """ssh ${sshUser}@${upgradeServer} -t"""
             String parameters = '-u${DBUPGRADEUSER} -p${DBUPGRADEPASS}'
-            sh """${localCommand} '${deployLocation}/cli/upd.php ${parameters} ${staffHelp} ${studentHelp}'"""
+            sh """${localCommand} \"${deployLocation}/cli/upd.php ${parameters} ${staffHelp} ${studentHelp}\""""
         }
 
         // Make sure that the config file and any backups are readonly.
