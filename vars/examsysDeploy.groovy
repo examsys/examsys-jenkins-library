@@ -15,6 +15,10 @@ def call(Map pipelineParams = [:]) {
     Boolean runUpgradeScript = pipelineParams.runUpgradeScript ?: true
     // the location that the code should live when it is live, it must have no trailing slash.
     String deployLocation = pipelineParams.deployLocation ?: '/var/www/html'
+    // The general file permissions for ExamSys.
+    String filePermissions = pipelineParams.filePermissions ?: '775'
+    // The cli file permissions for ExamSys.
+    String cliPermissions = pipelineParams.cliPermissions ?: filePermissions
     // The permissions that the config files will be given.
     String configPermissions = pipelineParams.configPermissions ?: '444'
     // The user and group that the deployed files will be given.
@@ -137,6 +141,12 @@ private addCode(
 
     // Copy the existing config file into the new codebase.
     sh """ssh ${sshUser}@${server} -t 'cp ${deployLocation}${configFile} ${newCode}${configFile}'"""
+
+    // Set the general file permissions.
+    sh """ssh ${sshUser}@${server} -t 'chmod -R ${filePermissions} ${newCode}'"""
+
+    // Set the command line file permissions.
+    sh """ssh ${sshUser}@${server} -t 'chmod -R ${cliPermissions} ${newCode}/cli/*'"""
 
     // Protect the config files.
     sh """ssh ${sshUser}@${server} -t 'chmod ${configPermissions} ${newCode}${configDir}/*'"""
