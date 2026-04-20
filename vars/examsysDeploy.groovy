@@ -81,7 +81,7 @@ private configDir() {
 
 private configFile() {
     // The name of the ExamSys configuration file.
-    return configDir() + '/config.php'
+    return configDir() + '/config.inc.php'
 }
 
 private newCodeLocation(String deployLocation) {
