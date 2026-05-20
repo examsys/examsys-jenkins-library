@@ -222,7 +222,9 @@ private doUpgrade(
         ]) {
             String localCommand = """ssh ${sshUser}@${upgradeServer} -t"""
             String parameters = '-u${DBUPGRADEUSER} -p${DBUPGRADEPASS}'
-            sh """${localCommand} \"php ${deployLocation}/cli/upd.php ${parameters} ${staffHelp} ${studentHelp}\""""
+            // There is a bug with the upgrade script that means it only works correctly
+            // when run from the root of ExamSys.
+            sh """${localCommand} \"cd ${deployLocation}; php cli/upd.php ${parameters} ${staffHelp} ${studentHelp}\""""
         }
 
         // Make sure that the config file and any backups are readonly.
